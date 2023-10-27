@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/Command-Line-Interpreter-CLI-.iml" filepath="$PROJECT_DIR$/.idea/Command-Line-Interpreter-CLI-.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CommandLineInterpreter/CommandLineInterpreter.iml" filepath="$PROJECT_DIR$/CommandLineInterpreter/CommandLineInterpreter.iml" />
+    </modules>
+  </component>
+</project>
