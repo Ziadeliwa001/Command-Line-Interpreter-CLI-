@@ -20,6 +20,10 @@ class Parser {
             args = Arrays.copyOfRange(parsedInput, 2, parsedInput.length);
             return true;
         }
+//        else if(parsedInput.length != 2) {
+//            System.out.println("Usage: cd <directory>");
+//            return true;
+//        }
         else
         {
             commandName = parsedInput[0];
@@ -50,6 +54,46 @@ class Terminal {
         String currentDirectory = System.getProperty("user.dir");
         return "Current directory is: " + currentDirectory;
     }
+
+    public void cd(String[] args) {
+        String currentDirectory = System.getProperty("user.dir");
+        if (args ==null){
+            cdHome();
+        }
+        else if (args[0].equals("..")) {
+            // Case 2: Change to the previous directory
+            File currentDir = new File(currentDirectory);
+            File parentDir = currentDir.getParentFile();
+            if (parentDir != null) {
+                System.setProperty("user.dir", parentDir.getAbsolutePath());
+                System.out.println("Current directory is now: " + parentDir.getAbsolutePath());
+            } else {
+                System.out.println("Cannot navigate to the previous directory. Already at the root.");
+            }
+        } else {
+            // Case 3: Change to the specified directory
+            File newDir = new File(args[0]);
+
+            if (!newDir.isAbsolute()) {
+                newDir = new File(currentDirectory, args[0]);
+            }
+
+            if (!newDir.exists() || !newDir.isDirectory()) {
+                System.out.println("Directory does not exist.");
+            } else {
+                System.setProperty("user.dir", newDir.getAbsolutePath());
+                System.out.println("Current directory is now: " + newDir.getAbsolutePath());
+            }
+        }
+    }
+
+    public void cdHome() {
+        // Case 1: Change to the home directory
+        String userHomeDirectory = System.getProperty("user.home");
+        System.setProperty("user.dir", userHomeDirectory);
+        System.out.println("Current directory is now: " + userHomeDirectory);
+    }
+
 
     public void cp(String[] args) {
         if (args.length != 2) {
@@ -151,6 +195,9 @@ class Terminal {
                 break;
             case "cp":
                 cp(args);
+                break;
+            case "cd":
+                cd(args);
                 break;
 
             default:
