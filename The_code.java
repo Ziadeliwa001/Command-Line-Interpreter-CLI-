@@ -63,7 +63,11 @@ class Terminal {
         } else if (args[0].equals("..")) {
             currentDirectory = currentDirectory.getParent();
         } else {
-            Path newPath = Paths.get(args[0]);
+            Path newPath = currentDirectory.resolve(args[0]);
+            if (!Files.exists(newPath)) {
+                System.out.println("Directory " + args[0] + " does not exist.");
+                return;
+            }
             if (newPath.isAbsolute()) {
                 currentDirectory = newPath;
             } else {
@@ -102,8 +106,8 @@ class Terminal {
     }
 
     public void rmdir(String... args) throws IOException {
-        if (args.length == 0) {
-            // Remove all empty directories in the current path
+        if (args.length == 0 || (args.length == 1 && args[0].equals("*"))) {
+
             try (Stream<Path> paths = Files.walk(currentDirectory)) {
                 paths.filter(Files::isDirectory)
                         .filter(path -> {
@@ -115,10 +119,15 @@ class Terminal {
                         })
                         .forEach(path -> path.toFile().delete());
             }
-            addCommandToHistory("rmdir");
+            addCommandToHistory("rmdir *");
         } else {
             for (String arg : args) {
-                Files.delete(currentDirectory.resolve(arg));
+                Path dirPath = currentDirectory.resolve(arg);
+                if (isDirectoryEmpty(dirPath)) {
+                    Files.delete(dirPath);
+                } else {
+                    System.out.println("Directory " + arg + " is not empty and was not deleted.");
+                }
             }
             addCommandToHistory("rmdir " + String.join(" ", args));
         }
@@ -238,7 +247,12 @@ class Terminal {
                 break;
             }
             if (parser.parse(input)) {
-                terminal.chooseCommand(parser.getCommandName(), parser.getArgs());
+                try {
+                    terminal.chooseCommand(parser.getCommandName(), parser.getArgs());
+                }
+                catch (IOException e){
+                    System.out.println("Command Error!");
+                }
             }
         }
     }
